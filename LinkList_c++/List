@@ -1,0 +1,206 @@
+#ifndef _LIST_H_
+#define _LIST_H_
+
+
+#include <iostream>
+#include <string>
+
+
+template<typename T>
+class List
+{
+private:
+	//声明链表节点类型
+	typedef struct _Node
+	{
+		T data;  //数据域
+		struct _Node* next;  //指针域
+	} Node;
+
+	Node* head;
+
+public:
+	//创建一个空链表
+	List()
+	{
+		Node* node = new Node;
+		node->next = NULL;
+		this->head = node;
+	}
+
+	//销毁链表
+	~List()
+	{
+		Node* p = NULL;
+
+		while(head != NULL)	
+		{
+			p = head->next;
+			delete head;
+			head = p;
+		}
+	}
+
+	//增加节点
+	void push_back(const T& data)  //尾部插入
+	{
+		Node* node = new Node;
+		node->data = data;
+		node->next = NULL;
+
+		Node* head = this->head;
+		while(head->next != NULL)
+		{
+			head = head->next;
+		}
+
+		head->next = node;
+	}
+
+	void push_front(const T& data)  //头部插入
+	{
+		Node* node = new Node;
+		node->data = data;
+		node->next = head->next;
+
+		head->next = node;	
+	}
+
+	void insert(int pos, const T& data)  //中间插入
+	{
+		Node* head = this->head;
+
+		if(pos < 0) pos = 0;
+
+		while(pos--)
+		{
+			if(head->next == NULL) break;
+			head = head->next;
+		}
+
+		Node* node = new Node;
+		node->data = data;
+		node->next = head->next;
+
+		head->next = node;
+	}
+
+	//删除节点
+	bool remove(const T& data)
+	{
+		Node* head = this->head;
+
+		while(head->next != NULL && head->next->data != data)
+		{
+			head = head->next;
+		}
+
+		if(head->next == NULL)
+			return false;
+
+		Node* p = head->next;
+		head->next = head->next->next;
+		delete p;
+
+		return true;
+	}
+
+	//清空链表
+	void clear()
+	{
+		Node* head = this->head;
+
+		Node* p = NULL;
+
+		p = head->next;
+		head->next = NULL;
+		head = p;
+
+		while(head != NULL)	
+		{
+			p = head->next;
+			delete head;
+			head = p;
+		}	
+	}
+
+
+	//修改节点数据
+	bool update(const T& old, const T& new_val)
+	{
+		Node* head = this->head;
+
+		head = head->next;
+
+		while(head != NULL)
+		{
+			if(head->data == old)
+				break;
+
+			head = head->next;
+		}
+
+		if(head == NULL) return false;
+		head->data = new_val;
+		return true;
+	}
+
+	//查找某个数据
+	T& find(T data) const
+	{
+		Node* head = this->head;
+		head = head->next;
+		while(head != NULL && head->data != data)
+		{
+			head = head->next;
+		}
+
+		if(head == NULL) return NULL;
+		return head->data;
+	}
+
+	//排序
+
+	//逆序
+
+
+	//判空
+	bool empty() const
+	{
+		return !(head->next);
+	}
+
+	//获取链表长度
+	int size() const
+	{
+		Node* head = this->head;
+		int cnt = 0;
+
+		while(head->next != NULL)
+		{
+			++cnt;
+			head = head->next;
+		}
+
+		return cnt;
+	}
+
+	//遍历所有节点
+	void traverse(int(*visit)(T& data))
+	{
+		Node* head = this->head;
+		head = head->next;
+
+		while(head != NULL)
+		{
+			if(!visit(head->data))
+				break;
+
+			head = head->next;
+		}
+	}
+
+};
+
+
+#endif
